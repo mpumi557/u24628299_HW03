@@ -1,0 +1,433 @@
+﻿@model u24628299_Ass3.Models.HomeViewModel
+@{
+    ViewBag.Title = "Home Page";
+    var firstStaff = Model.Staffs.FirstOrDefault();
+    var firstCustomer = Model.Customers.FirstOrDefault();
+    var firstProduct = Model.Products.FirstOrDefault();
+}
+
+@section Styles {
+    <style>
+        .section-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        .card-footer {
+            background-color: #fff;
+            border-top: 1px solid rgba(0,0,0,.125);
+            padding: 1rem;
+        }
+
+        .highlight-panel {
+            background-color: #e6f0ff; 
+            border: 1px solid #003366; 
+        }
+
+        .highlight-panel .card-header {
+            background-color: #d9e6ff; 
+            color: #003366;
+        }
+        .card-footer {
+            background-color: #e6f0ff; 
+            border-top: 1px solid #003366; 
+            color: #003366; 
+            font-weight: 500;
+        }
+
+        label {
+            font-weight: 500;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        input[readonly] {
+            background-color: #f8f9fa;
+        }
+
+        .form-control, .form-select {
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-create {
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .detail-box {
+            margin-top: 0.5rem;
+        }
+
+        .paginator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+            .paginator a,
+            .paginator span {
+                padding: 0.375rem 0.75rem;
+                text-decoration: none;
+                color: #007bff;
+                border: 1px solid #dee2e6;
+                border-radius: 4px;
+                background-color: white;
+                transition: all 0.2s ease;
+            }
+
+                .paginator a:hover:not(.disabled) {
+                    background-color: #007bff;
+                    color: white;
+                    border-color: #007bff;
+                }
+
+                .paginator span.active {
+                    background-color: #007bff;
+                    color: white;
+                    border-color: #007bff;
+                    font-weight: 600;
+                }
+
+                .paginator a.disabled {
+                    color: #6c757d;
+                    pointer-events: none;
+                    opacity: 0.5;
+                }
+
+                .paginator span:not(.active) {
+                    border: none;
+                    background: none;
+                    color: #6c757d;
+                }
+
+        .container {
+            max-width: 1400px;
+        }
+
+        .filter-form {
+            margin-bottom: 1.5rem;
+        }
+
+            .filter-form .form-select {
+                margin-bottom: 0.5rem;
+            }
+
+        .product-image {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.95rem;
+        }
+
+        @@media (max-width: 768px) {
+            .product-image {
+                height: 60px;
+            }
+        }
+    </style>
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Staff Section -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card highlight-panel">
+                <div class="card-header">
+                    <div class="section-header">Staff</div>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-create" data-bs-toggle="modal" data-bs-target="#createStaffModal">Create</button>
+                    <label>First Name</label>
+                    <input type="text" class="form-control" value="@(firstStaff?.first_name ?? "")" readonly />
+                    <label>Last Name</label>
+                    <input type="text" class="form-control" value="@(firstStaff?.last_name ?? "")" readonly />
+                    <label>Staff ID</label>
+                    <input type="text" class="form-control" value="@(firstStaff?.staff_id.ToString() ?? "")" readonly />
+                    <label>Store</label>
+                    <input type="text" class="form-control" value="@(firstStaff?.stores?.store_name ?? "")" readonly />
+                </div>
+                <div class="card-footer">
+                    <div class="paginator">
+                        @{
+                            int staffTotalPages = (int)Math.Ceiling((double)Model.TotalStaffCount / Model.PageSize);
+                            int staffCurrent = Model.StaffPage;
+                            int staffStart = Math.Max(1, staffCurrent - 2);
+                            int staffEnd = Math.Min(staffTotalPages, staffCurrent + 2);
+
+                            <a href="?staffPage=@(staffCurrent > 1 ? staffCurrent - 1 : 1)&customerPage=@Model.CustomerPage&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId"
+                               class="@(staffCurrent <= 1 ? "disabled" : "")">Previous</a>
+
+                            if (staffStart > 1)
+                            {
+                                <a href="?staffPage=1&customerPage=@Model.CustomerPage&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">1</a>
+                                if (staffStart > 2)
+                                { <span>...</span>;
+                                }
+                            }
+                            for (int i = staffStart; i <= staffEnd; i++)
+                            {
+                                if (i == staffCurrent)
+                                {
+                                    <span class="active">@i</span>
+                                }
+                                else
+                                {
+                                    <a href="?staffPage=@i&customerPage=@Model.CustomerPage&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">@i</a>
+                                }
+                            }
+                            if (staffEnd < staffTotalPages)
+                            {
+                                if (staffEnd < staffTotalPages - 1)
+                                { <span>...</span>;
+                                }
+                                <a href="?staffPage=@staffTotalPages&customerPage=@Model.CustomerPage&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">@staffTotalPages</a>
+                            }
+
+                            <a href="?staffPage=@(staffCurrent < staffTotalPages ? staffCurrent + 1 : staffTotalPages)&customerPage=@Model.CustomerPage&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId"
+                               class="@(staffCurrent >= staffTotalPages ? "disabled" : "")">Next</a>
+                            <a href="?staffPage=@staffTotalPages&customerPage=@Model.CustomerPage&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">Last</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customers Section -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card highlight-panel">
+                <div class="card-header">
+                    <div class="section-header">Customers</div>
+                </div>
+                <div class="card-body">
+                    <button type="button" class="btn btn-primary btn-create" data-bs-toggle="modal" data-bs-target="#createCustomerModal">Create</button>
+                    <label>First Name</label>
+                    <input type="text" class="form-control" value="@(firstCustomer?.first_name ?? "")" readonly />
+                    <label>Last Name</label>
+                    <input type="text" class="form-control" value="@(firstCustomer?.last_name ?? "")" readonly />
+                    <label>Customer ID</label>
+                    <input type="text" class="form-control" value="@(firstCustomer?.customer_id.ToString() ?? "")" readonly />
+                    <label>Location</label>
+                    <input type="text" class="form-control" value="@(firstCustomer != null ? (firstCustomer.city + ", " + firstCustomer.state) : "")" readonly />
+                </div>
+                <div class="card-footer">
+                    <div class="paginator">
+                        @{
+                            int customerTotalPages = (int)Math.Ceiling((double)Model.TotalCustomerCount / Model.PageSize);
+                            int customerCurrent = Model.CustomerPage;
+                            int customerStart = Math.Max(1, customerCurrent - 2);
+                            int customerEnd = Math.Min(customerTotalPages, customerCurrent + 2);
+
+                            <a href="?staffPage=@Model.StaffPage&customerPage=@(customerCurrent > 1 ? customerCurrent - 1 : 1)&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId"
+                               class="@(customerCurrent <= 1 ? "disabled" : "")">Previous</a>
+
+                            if (customerStart > 1)
+                            {
+                                <a href="?staffPage=@Model.StaffPage&customerPage=1&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">1</a>
+                                if (customerStart > 2)
+                                { <span>...</span>;
+                                }
+                            }
+                            for (int i = customerStart; i <= customerEnd; i++)
+                            {
+                                if (i == customerCurrent)
+                                {
+                                    <span class="active">@i</span>
+                                }
+                                else
+                                {
+                                    <a href="?staffPage=@Model.StaffPage&customerPage=@i&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">@i</a>
+                                }
+                            }
+                            if (customerEnd < customerTotalPages)
+                            {
+                                if (customerEnd < customerTotalPages - 1)
+                                { <span>...</span>;
+                                }
+                                <a href="?staffPage=@Model.StaffPage&customerPage=@customerTotalPages&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">@customerTotalPages</a>
+                            }
+
+                            <a href="?staffPage=@Model.StaffPage&customerPage=@(customerCurrent < customerTotalPages ? customerCurrent + 1 : customerTotalPages)&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId"
+                               class="@(customerCurrent >= customerTotalPages ? "disabled" : "")">Next</a>
+                            <a href="?staffPage=@Model.StaffPage&customerPage=@customerTotalPages&productPage=@Model.ProductPage&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">Last</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Section -->
+        <div class="col-lg-4 col-md-12 col-sm-12">
+            <div class="card highlight-panel">
+                <div class="card-header">
+                    <div class="section-header">Product details</div>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="filter-form">
+                        <select name="brandId" class="form-select">
+                            <option value="">All Brands</option>
+                            @if (Model.Brands != null)
+                            {
+                                foreach (var brand in Model.Brands)
+                                {
+                                    <option value="@brand.brand_id" @(brand.brand_id == Model.SelectedBrandId ? "selected" : "")>@brand.brand_name</option>
+                                }
+                            }
+                        </select>
+                        <select name="categoryId" class="form-select">
+                            <option value="">All Categories</option>
+                            @if (Model.Categories != null)
+                            {
+                                foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.category_id" @(category.category_id == Model.SelectedCategoryId ? "selected" : "")>@category.category_name</option>
+                                }
+                            }
+                        </select>
+                        <input type="hidden" name="staffPage" value="@Model.StaffPage" />
+                        <input type="hidden" name="customerPage" value="@Model.CustomerPage" />
+                        <input type="hidden" name="productPage" value="@Model.ProductPage" />
+                        <button type="submit" class="btn btn-primary btn-create">Filter</button>
+                    </form>
+                    <div class="row">
+                        <div class="col-7">
+                            <label>Product Name</label>
+                            <input type="text" class="form-control" value="@(firstProduct?.product_name ?? "")" readonly />
+                            <label>Brand</label>
+                            <input type="text" class="form-control" value="@(firstProduct?.brands?.brand_name ?? "")" readonly />
+                            <label>Category</label>
+                            <input type="text" class="form-control" value="@(firstProduct?.categories?.category_name ?? "")" readonly />
+                            <label>Year</label>
+                            <input type="text" class="form-control" value="@(firstProduct?.model_year.ToString() ?? "")" readonly />
+                        </div>
+                        <div class="col-5 d-flex align-items-center justify-content-center">
+                            <div style="width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border-radius: 8px; border: 1px solid #e0e0e0;">
+                                @if (!string.IsNullOrEmpty(firstProduct?.image_path))
+                                {
+                                    <img src="@firstProduct.image_path"
+                                         alt="@firstProduct.product_name"
+                                         style="max-width: 130px; max-height: 130px; object-fit: contain; border-radius: 6px;"
+                                         onerror="this.src='/Content/images/placeholder.jpg';" />
+                                }
+                                else
+                                {
+                                    <span style="color: #888; font-size: 0.95rem;">Bicycle image</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="paginator">
+                        @{
+                            int productTotalPages = (int)Math.Ceiling((double)Model.TotalProductCount / Model.PageSize);
+                            int productCurrent = Model.ProductPage;
+                            int productStart = Math.Max(1, productCurrent - 2);
+                            int productEnd = Math.Min(productTotalPages, productCurrent + 2);
+
+                            <a href="?staffPage=@Model.StaffPage&customerPage=@Model.CustomerPage&productPage=@(productCurrent > 1 ? productCurrent - 1 : 1)&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId"
+                               class="@(productCurrent <= 1 ? "disabled" : "")">Previous</a>
+
+                            if (productStart > 1)
+                            {
+                                <a href="?staffPage=@Model.StaffPage&customerPage=@Model.CustomerPage&productPage=1&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">1</a>
+                                if (productStart > 2)
+                                { <span>...</span>;
+                                }
+                            }
+                            for (int i = productStart; i <= productEnd; i++)
+                            {
+                                if (i == productCurrent)
+                                {
+                                    <span class="active">@i</span>
+                                }
+                                else
+                                {
+                                    <a href="?staffPage=@Model.StaffPage&customerPage=@Model.CustomerPage&productPage=@i&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">@i</a>
+                                }
+                            }
+                            if (productEnd < productTotalPages)
+                            {
+                                if (productEnd < productTotalPages - 1)
+                                { <span>...</span>;
+                                }
+                                <a href="?staffPage=@Model.StaffPage&customerPage=@Model.CustomerPage&productPage=@productTotalPages&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">@productTotalPages</a>
+                            }
+
+                            <a href="?staffPage=@Model.StaffPage&customerPage=@Model.CustomerPage&productPage=@(productCurrent < productTotalPages ? productCurrent + 1 : productTotalPages)&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId"
+                               class="@(productCurrent >= productTotalPages ? "disabled" : "")">Next</a>
+                            <a href="?staffPage=@Model.StaffPage&customerPage=@Model.CustomerPage&productPage=@productTotalPages&brandId=@Model.SelectedBrandId&categoryId=@Model.SelectedCategoryId">Last</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Staff Modal -->
+<div class="modal fade" id="createStaffModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Staff</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                @{
+                    var staffModel = new u24628299_Ass3.Models.staffs();
+                    var storesList = Model.Stores != null ? new SelectList(Model.Stores, "store_id", "store_name") : Enumerable.Empty<SelectListItem>();
+                    var managersList = Model.Staffs != null ? new SelectList(Model.Staffs, "staff_id", "first_name") : Enumerable.Empty<SelectListItem>();
+                    var viewData = new ViewDataDictionary {
+                        { "store_id", storesList },
+                        { "manager_id", managersList }
+                    };
+                    Html.RenderPartial("~/Views/Staffs/Create.cshtml", staffModel, viewData);
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Create Customer Modal -->
+<div class="modal fade" id="createCustomerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                @{
+                    var customerModel = new u24628299_Ass3.Models.customers();
+                    Html.RenderPartial("~/Views/Customers/Create.cshtml", customerModel);
+                }
+            </div>
+        </div>
+    </div>
+</div>

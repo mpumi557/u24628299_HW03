@@ -1,0 +1,518 @@
+﻿@section Styles {
+    <style>
+        .section-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            margin-bottom: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            padding: 1rem;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        .card-footer {
+            background-color: #e6f0ff; /* soft blue background */
+            border-top: 1px solid #003366; /* dark blue border */
+            color: #003366; /* blue text */
+            font-weight: 500;
+        }
+
+        .highlight-panel {
+            background-color: #e6f0ff; /* light blue background */
+            border: 1px solid #003366; /* dark blue outline */
+        }
+
+        .highlight-panel .card-header {
+             background-color: #d9e6ff; /* slightly darker header blue */
+             color: #003366;
+        }
+
+        label {
+            font-weight: 500;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        input[readonly] {
+            background-color: #f8f9fa;
+        }
+
+        .form-control, .form-select {
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-create {
+            margin-bottom: 1rem;
+            width: 100%;
+        }
+
+        .maintain-actions button {
+            margin-right: 0.5rem;
+        }
+
+        .detail-box {
+            margin-top: 0.5rem;
+        }
+
+        /* Product Cards Styling */
+        .product-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            transition: box-shadow 0.2s ease;
+            background: white;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .product-card .row {
+            align-items: center;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .product-image-placeholder {
+            width: 100%;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border-radius: 6px;
+            color: #888;
+            font-size: 0.75rem;
+        }
+
+        .product-details {
+            padding-left: 0.75rem;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+            color: #333;
+        }
+
+        .product-info {
+            margin-bottom: 0.25rem;
+            color: #666;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .product-info small {
+            display: block;
+        }
+
+        .product-price {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #28a745;
+            margin-bottom: 0;
+        }
+
+        /* Pagination Styling */
+        .paginator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .paginator a,
+        .paginator span {
+            padding: 0.375rem 0.75rem;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            background-color: white;
+            transition: all 0.2s ease;
+        }
+
+        .paginator a:hover:not(.disabled) {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .paginator span.active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            font-weight: 600;
+        }
+
+        .paginator a.disabled {
+            color: #6c757d;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .paginator span:not(.active) {
+            border: none;
+            background: none;
+            color: #6c757d;
+        }
+
+        
+        .container {
+            max-width: 1400px;
+        }
+
+        
+        .filter-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-form .form-select {
+            margin-bottom: 0.5rem;
+        }
+
+        
+        @@media (max-width: 768px) {
+            .product-card {
+                padding: 0.5rem;
+            }
+
+            .product-image,
+            .product-image-placeholder {
+                height: 60px;
+            }
+
+            .product-name {
+                font-size: 0.85rem;
+            }
+
+            .product-info {
+                font-size: 0.75rem;
+            }
+
+            .product-price {
+                font-size: 1rem;
+            }
+        }
+    </style>
+}
+
+@model u24628299_Ass3.Models.MaintainViewModel
+
+@{
+    ViewBag.Title = "Maintain";
+    var firstStaff = Model.Staffs.FirstOrDefault();
+    var firstCustomer = Model.Customers.FirstOrDefault();
+    var firstProduct = Model.Products.FirstOrDefault();
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Staff Section -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card highlight-panel">
+                <div class="card-header">
+                    <div class="section-header">Staff</div>
+                    <select id="staffDropdown" class="form-select">
+                        <option value="">Select staff</option>
+                        @foreach (var staff in Model.Staffs)
+                        {
+                            <option value="@staff.staff_id">@staff.first_name @staff.last_name</option>
+                        }
+                    </select>
+                </div>
+                <div class="card-body">
+                    <label>First Name</label>
+                    <input type="text" class="form-control" id="staffFirstName" value="@(firstStaff?.first_name ?? "")" readonly />
+                    <label>Last Name</label>
+                    <input type="text" class="form-control" id="staffLastName" value="@(firstStaff?.last_name ?? "")" readonly />
+                    <label>Staff ID</label>
+                    <input type="text" class="form-control" id="staffId" value="@(firstStaff?.staff_id.ToString() ?? "")" readonly />
+
+                    <label>Sold Items</label>
+                    <div id="staffSoldItems" class="border p-2" style="max-height:200px;overflow:auto;">
+                        @{
+                            if (firstStaff != null && firstStaff.orders != null && firstStaff.orders.Any(o => o.order_status == 4))
+                            {
+                                foreach (var order in firstStaff.orders.Where(o => o.order_status == 4).OrderBy(o => o.order_date))
+                                {
+                                    foreach (var item in order.order_items)
+                                    {
+                                        <div>
+                                            Sold @item.products.product_name
+                                        </div>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <div>No sold items found.</div>
+                            }
+                        }
+
+                    </div>
+                </div>
+                <div class="card-footer maintain-actions">
+                    <button type="button" class="btn btn-outline-primary edit-link" data-url="@Url.Action("Edit", "staffs", new { id = firstStaff?.staff_id })">Edit</button>
+                    <button type="button" class="btn btn-outline-success update-link" data-url="@Url.Action("Edit", "staffs", new { id = firstStaff?.staff_id })">Update</button>
+                    <button type="button" class="btn btn-outline-danger delete-link" data-url="@Url.Action("Delete", "staffs", new { id = firstStaff?.staff_id })">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Customer Section -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card highlight-panel">
+                <div class="card-header">
+                    <div class="section-header">Customers</div>
+                    <select id="customerDropdown" class="form-select">
+                        <option value="">Select customer</option>
+                        @foreach (var customer in Model.Customers)
+                        {
+                            <option value="@customer.customer_id">@customer.first_name @customer.last_name</option>
+                        }
+                    </select>
+                </div>
+                <div class="card-body">
+                    <label>First Name</label>
+                    <input type="text" class="form-control" id="customerFirstName" value="@(firstCustomer?.first_name ?? "")" readonly />
+                    <label>Last Name</label>
+                    <input type="text" class="form-control" id="customerLastName" value="@(firstCustomer?.last_name ?? "")" readonly />
+                    <label>Customer ID</label>
+                    <input type="text" class="form-control" id="customerId" value="@(firstCustomer?.customer_id.ToString() ?? "")" readonly />
+
+                    <label>Purchased Items</label>
+                    <div id="customerPurchasedItems" class="border p-2" style="max-height:200px;overflow:auto;">
+                        @{
+                            if (firstCustomer != null && firstCustomer.orders != null && firstCustomer.orders.Any(o => o.order_status == 4))
+                            {
+                                foreach (var order in firstCustomer.orders.Where(o => o.order_status == 4).OrderBy(o => o.order_date))
+                                {
+                                    foreach (var item in order.order_items)
+                                    {
+                                        <div>
+                                            Purchased @item.products.product_name
+                                        </div>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <div>No purchased items found.</div>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="card-footer maintain-actions">
+                    <button type="button" class="btn btn-outline-primary edit-link" data-url="@Url.Action("Edit", "customers", new { id = firstCustomer?.customer_id })">Edit</button>
+                    <button type="button" class="btn btn-outline-success update-link" data-url="@Url.Action("Edit", "customers", new { id = firstCustomer?.customer_id })">Update</button>
+                    <button type="button" class="btn btn-outline-danger delete-link" data-url="@Url.Action("Delete", "customers", new { id = firstCustomer?.customer_id })">Delete</button>
+                </div>
+            </div>
+        </div>
+
+<!-- Product Section -->
+<div class="col-lg-4 col-md-12 col-sm-12">
+    <div class="card highlight-panel">
+        <div class="card-header">
+            <div class="section-header">Products</div>
+            <select id="productDropdown" class="form-select">
+                <option value="">Select product</option>
+                @foreach (var product in Model.Products)
+                {
+                    <option value="@product.product_id">@product.product_name (@product.model_year)</option>
+                }
+            </select>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-7">
+                    <label>Product Name</label>
+                    <input type="text" class="form-control" id="productName" value="@(firstProduct?.product_name ?? "")" readonly />
+                    <label>Brand</label>
+                    <input type="text" class="form-control" id="productBrand" value="@(firstProduct?.brands?.brand_name ?? "")" readonly />
+                    <label>Category</label>
+                    <input type="text" class="form-control" id="productCategory" value="@(firstProduct?.categories?.category_name ?? "")" readonly />
+                    <label>Year</label>
+                    <input type="text" class="form-control" id="productYear" value="@(firstProduct?.model_year.ToString() ?? "")" readonly />
+                </div>
+                <div class="col-5 d-flex align-items-center justify-content-center">
+                    <div style="width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border  -radius: 8px; border: 1px solid #e0e0e0;">
+                        @if (!string.IsNullOrEmpty(firstProduct?.image_path))
+                        {
+                            <img src="@firstProduct.image_path"
+                                 alt="@firstProduct.product_name"
+                                 style="max-width: 130px; max-height: 130px; object-fit: contain; border-radius: 6px;"
+                                 onerror="this.src='/Content/images/placeholder.jpg';" />
+                        }
+                        else
+                        {
+                            <span style="color: #888; font-size: 0.95rem;">Bicycle image</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer maintain-actions">
+            <button type="button" class="btn btn-outline-primary edit-link" data-url="@Url.Action("Edit", "products", new { id = firstProduct?.product_id })">Edit</button>
+            <button type="button" class="btn btn-outline-success update-link" data-url="@Url.Action("Edit", "products", new { id = firstProduct?.product_id })">Update</button>
+            <button type="button" class="btn btn-outline-danger delete-link" data-url="@Url.Action("Delete", "products", new { id = firstProduct?.product_id })">Delete</button>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+
+<!-- Modal Structure -->
+<div id="myModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Async CRUD</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal-content">
+                <!-- Modal content will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    <script>
+        $(function () {
+            // Open modal for Edit, Update, Delete
+            $(".edit-link, .update-link, .delete-link").click(function (e) {
+                e.preventDefault();
+                var url = $(this).data("url");
+                if (!url) return;
+                $.get(url, function (data) {
+                    $("#modal-content").html(data);
+                    var modal = new bootstrap.Modal(document.getElementById('myModal'));
+                    modal.show();
+                }).fail(function () {
+                    alert("Error loading content.");
+                });
+            });
+
+            // Handle form submission in modal
+            $("#modal-content").on("submit", "form", function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr("action");
+                var formData = form.serialize();
+                $.post(url, formData, function (data) {
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
+                    if (modal) modal.hide();
+                    location.reload();
+                }).fail(function () {
+                    alert("Error saving changes.");
+                });
+            });
+
+            // Staff dropdown change event for dynamic card update
+            $('#staffDropdown').change(function () {
+                var staffId = $(this).val();
+                if (!staffId) return;
+
+                // Update staff details
+                $.get('@Url.Action("GetStaffDetails", "Maintain")', { id: staffId }, function (data) {
+                    $('#staffFirstName').val(data.first_name);
+                    $('#staffLastName').val(data.last_name);
+                    $('#staffId').val(data.staff_id);
+                    // Update action buttons
+                    $('.edit-link').data('url', '@Url.Action("Edit", "staffs")/' + data.staff_id);
+                    $('.update-link').data('url', '@Url.Action("Edit", "staffs")/' + data.staff_id);
+                    $('.delete-link').data('url', '@Url.Action("Delete", "staffs")/' + data.staff_id);
+                });
+
+                // Update sold items
+                $.get('@Url.Action("GetStaffSoldItems", "Maintain")', { id: staffId }, function (items) {
+                    var html = "";
+                    if (items && items.length > 0) {
+                        for (var i = 0; i < items.length; i++) {
+                            var it = items[i];
+                            html += "Sold " + it.product_name + "<br/>";
+                        }
+                    } else {
+                        html = "No sold items found.";
+                    }
+                    $('#staffSoldItems').html(html);
+                });
+            });
+
+            // Customer dropdown change event for dynamic card update
+            $('#customerDropdown').change(function () {
+                var customerId = $(this).val();
+                if (!customerId) return;
+
+                // Update customer details
+                $.get('@Url.Action("GetCustomerDetails", "Maintain")', { id: customerId }, function (data) {
+                    $('#customerFirstName').val(data.first_name);
+                    $('#customerLastName').val(data.last_name);
+                    $('#customerId').val(data.customer_id);
+                    // Update action buttons
+                    $('.edit-link').data('url', '@Url.Action("Edit", "customers")/' + data.customer_id);
+                    $('.update-link').data('url', '@Url.Action("Edit", "customers")/' + data.customer_id);
+                    $('.delete-link').data('url', '@Url.Action("Delete", "customers")/' + data.customer_id);
+                });
+
+                // Update purchased items
+                $.get('@Url.Action("GetCustomerPurchasedItems", "Maintain")', { id: customerId }, function (items) {
+                    var html = "";
+                    if (items && items.length > 0) {
+                        for (var i = 0; i < items.length; i++) {
+                            var it = items[i];
+                            html += "Purchased " + it.product_name + "<br/>";
+                        }
+                    } else {
+                        html = "No purchased items found.";
+                    }
+                    $('#customerPurchasedItems').html(html);
+                });
+            });
+
+            // Product dropdown change event for dynamic card update
+            $('#productDropdown').change(function () {
+                var productId = $(this).val();
+                if (!productId) return;
+
+                $.get('@Url.Action("GetProductDetails", "Maintain")', { id: productId }, function (data) {
+                    if (!data) return;
+                    $('#productName').val(data.product_name);
+                    $('#productBrand').val(data.brand_name);
+                    $('#productCategory').val(data.category_name);
+                    $('#productYear').val(data.model_year);
+
+                    // Update action buttons
+                    $('.edit-link').data('url', '@Url.Action("Edit", "products")/' + data.product_id);
+                    $('.update-link').data('url', '@Url.Action("Edit", "products")/' + data.product_id);
+                    $('.delete-link').data('url', '@Url.Action("Delete", "products")/' + data.product_id);
+                });
+            });
+        });
+    </script>
+}
