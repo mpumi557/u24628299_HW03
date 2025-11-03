@@ -34,10 +34,10 @@
             border: 1px solid #003366; /* dark blue outline */
         }
 
-        .highlight-panel .card-header {
-             background-color: #d9e6ff; /* slightly darker header blue */
-             color: #003366;
-        }
+            .highlight-panel .card-header {
+                background-color: #d9e6ff; /* slightly darker header blue */
+                color: #003366;
+            }
 
         label {
             font-weight: 500;
@@ -77,13 +77,13 @@
             background: white;
         }
 
-        .product-card:hover {
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
+            .product-card:hover {
+                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            }
 
-        .product-card .row {
-            align-items: center;
-        }
+            .product-card .row {
+                align-items: center;
+            }
 
         .product-image {
             width: 100%;
@@ -122,9 +122,9 @@
             line-height: 1.4;
         }
 
-        .product-info small {
-            display: block;
-        }
+            .product-info small {
+                display: block;
+            }
 
         .product-price {
             font-weight: 700;
@@ -142,57 +142,57 @@
             flex-wrap: wrap;
         }
 
-        .paginator a,
-        .paginator span {
-            padding: 0.375rem 0.75rem;
-            text-decoration: none;
-            color: #007bff;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
-            background-color: white;
-            transition: all 0.2s ease;
-        }
+            .paginator a,
+            .paginator span {
+                padding: 0.375rem 0.75rem;
+                text-decoration: none;
+                color: #007bff;
+                border: 1px solid #dee2e6;
+                border-radius: 4px;
+                background-color: white;
+                transition: all 0.2s ease;
+            }
 
-        .paginator a:hover:not(.disabled) {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
+                .paginator a:hover:not(.disabled) {
+                    background-color: #007bff;
+                    color: white;
+                    border-color: #007bff;
+                }
 
-        .paginator span.active {
-            background-color: #007bff;
-            color: white;
-            border-color: #007bff;
-            font-weight: 600;
-        }
+                .paginator span.active {
+                    background-color: #007bff;
+                    color: white;
+                    border-color: #007bff;
+                    font-weight: 600;
+                }
 
-        .paginator a.disabled {
-            color: #6c757d;
-            pointer-events: none;
-            opacity: 0.5;
-        }
+                .paginator a.disabled {
+                    color: #6c757d;
+                    pointer-events: none;
+                    opacity: 0.5;
+                }
 
-        .paginator span:not(.active) {
-            border: none;
-            background: none;
-            color: #6c757d;
-        }
+                .paginator span:not(.active) {
+                    border: none;
+                    background: none;
+                    color: #6c757d;
+                }
 
-        
+
         .container {
             max-width: 1400px;
         }
 
-        
+
         .filter-form {
             margin-bottom: 1.5rem;
         }
 
-        .filter-form .form-select {
-            margin-bottom: 0.5rem;
-        }
+            .filter-form .form-select {
+                margin-bottom: 0.5rem;
+            }
 
-        
+
         @@media (max-width: 768px) {
             .product-card {
                 padding: 0.5rem;
@@ -234,28 +234,33 @@
             <div class="card highlight-panel">
                 <div class="card-header">
                     <div class="section-header">Staff</div>
-                    <select id="staffDropdown" class="form-select">
-                        <option value="">Select staff</option>
-                        @foreach (var staff in Model.Staffs)
-                        {
-                            <option value="@staff.staff_id">@staff.first_name @staff.last_name</option>
-                        }
-                    </select>
+                    <form method="get" action="@Url.Action("Maintain", "Maintain")" id="staffForm">
+                        <input type="hidden" name="customerId" value="@(Model.SelectedCustomer?.customer_id)" />
+                        <input type="hidden" name="productId" value="@(Model.SelectedProduct?.product_id)" />
+                        <select name="staffId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Select staff</option>
+                            @foreach (var staff in Model.Staffs)
+                            {
+                                <option value="@staff.staff_id" @(Model.SelectedStaff?.staff_id == staff.staff_id ? "selected" : "")>
+                                    @staff.first_name @staff.last_name
+                                </option>
+                            }
+                        </select>
+                    </form>
                 </div>
                 <div class="card-body">
                     <label>First Name</label>
-                    <input type="text" class="form-control" id="staffFirstName" value="@(firstStaff?.first_name ?? "")" readonly />
+                    <input type="text" class="form-control" value="@(Model.SelectedStaff?.first_name ?? "")" readonly />
                     <label>Last Name</label>
-                    <input type="text" class="form-control" id="staffLastName" value="@(firstStaff?.last_name ?? "")" readonly />
+                    <input type="text" class="form-control" value="@(Model.SelectedStaff?.last_name ?? "")" readonly />
                     <label>Staff ID</label>
-                    <input type="text" class="form-control" id="staffId" value="@(firstStaff?.staff_id.ToString() ?? "")" readonly />
-
+                    <input type="text" class="form-control" value="@(Model.SelectedStaff?.staff_id.ToString() ?? "")" readonly />
                     <label>Sold Items</label>
-                    <div id="staffSoldItems" class="border p-2" style="max-height:200px;overflow:auto;">
+                    <div class="border p-2" style="max-height:200px;overflow:auto;">
                         @{
-                            if (firstStaff != null && firstStaff.orders != null && firstStaff.orders.Any(o => o.order_status == 4))
+                            if (Model.SelectedStaff != null && Model.SelectedStaff.orders != null && Model.SelectedStaff.orders.Any(o => o.order_status == 4))
                             {
-                                foreach (var order in firstStaff.orders.Where(o => o.order_status == 4).OrderBy(o => o.order_date))
+                                foreach (var order in Model.SelectedStaff.orders.Where(o => o.order_status == 4).OrderBy(o => o.order_date))
                                 {
                                     foreach (var item in order.order_items)
                                     {
@@ -270,13 +275,15 @@
                                 <div>No sold items found.</div>
                             }
                         }
-
                     </div>
                 </div>
                 <div class="card-footer maintain-actions">
-                    <button type="button" class="btn btn-outline-primary edit-link" data-url="@Url.Action("Edit", "staffs", new { id = firstStaff?.staff_id })">Edit</button>
-                    <button type="button" class="btn btn-outline-success update-link" data-url="@Url.Action("Edit", "staffs", new { id = firstStaff?.staff_id })">Update</button>
-                    <button type="button" class="btn btn-outline-danger delete-link" data-url="@Url.Action("Delete", "staffs", new { id = firstStaff?.staff_id })">Delete</button>
+                    @if (Model.SelectedStaff != null)
+                    {
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#staffEditModal">Edit</button>
+                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#staffUpdateModal">Update</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#staffDeleteModal">Delete</button>
+                    }
                 </div>
             </div>
         </div>
@@ -286,28 +293,33 @@
             <div class="card highlight-panel">
                 <div class="card-header">
                     <div class="section-header">Customers</div>
-                    <select id="customerDropdown" class="form-select">
-                        <option value="">Select customer</option>
-                        @foreach (var customer in Model.Customers)
-                        {
-                            <option value="@customer.customer_id">@customer.first_name @customer.last_name</option>
-                        }
-                    </select>
+                    <form method="get" action="@Url.Action("Maintain", "Maintain")" id="customerForm">
+                        <input type="hidden" name="staffId" value="@(Model.SelectedStaff?.staff_id)" />
+                        <input type="hidden" name="productId" value="@(Model.SelectedProduct?.product_id)" />
+                        <select name="customerId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Select customer</option>
+                            @foreach (var customer in Model.Customers)
+                            {
+                                <option value="@customer.customer_id" @(Model.SelectedCustomer?.customer_id == customer.customer_id ? "selected" : "")>
+                                    @customer.first_name @customer.last_name
+                                </option>
+                            }
+                        </select>
+                    </form>
                 </div>
                 <div class="card-body">
                     <label>First Name</label>
-                    <input type="text" class="form-control" id="customerFirstName" value="@(firstCustomer?.first_name ?? "")" readonly />
+                    <input type="text" class="form-control" value="@(Model.SelectedCustomer?.first_name ?? "")" readonly />
                     <label>Last Name</label>
-                    <input type="text" class="form-control" id="customerLastName" value="@(firstCustomer?.last_name ?? "")" readonly />
+                    <input type="text" class="form-control" value="@(Model.SelectedCustomer?.last_name ?? "")" readonly />
                     <label>Customer ID</label>
-                    <input type="text" class="form-control" id="customerId" value="@(firstCustomer?.customer_id.ToString() ?? "")" readonly />
-
+                    <input type="text" class="form-control" value="@(Model.SelectedCustomer?.customer_id.ToString() ?? "")" readonly />
                     <label>Purchased Items</label>
-                    <div id="customerPurchasedItems" class="border p-2" style="max-height:200px;overflow:auto;">
+                    <div class="border p-2" style="max-height:200px;overflow:auto;">
                         @{
-                            if (firstCustomer != null && firstCustomer.orders != null && firstCustomer.orders.Any(o => o.order_status == 4))
+                            if (Model.SelectedCustomer != null && Model.SelectedCustomer.orders != null && Model.SelectedCustomer.orders.Any(o => o.order_status == 4))
                             {
-                                foreach (var order in firstCustomer.orders.Where(o => o.order_status == 4).OrderBy(o => o.order_date))
+                                foreach (var order in Model.SelectedCustomer.orders.Where(o => o.order_status == 4).OrderBy(o => o.order_date))
                                 {
                                     foreach (var item in order.order_items)
                                     {
@@ -325,194 +337,231 @@
                     </div>
                 </div>
                 <div class="card-footer maintain-actions">
-                    <button type="button" class="btn btn-outline-primary edit-link" data-url="@Url.Action("Edit", "customers", new { id = firstCustomer?.customer_id })">Edit</button>
-                    <button type="button" class="btn btn-outline-success update-link" data-url="@Url.Action("Edit", "customers", new { id = firstCustomer?.customer_id })">Update</button>
-                    <button type="button" class="btn btn-outline-danger delete-link" data-url="@Url.Action("Delete", "customers", new { id = firstCustomer?.customer_id })">Delete</button>
+                    @if (Model.SelectedCustomer != null)
+                    {
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#customerEditModal">Edit</button>
+                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#customerUpdateModal">Update</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#customerDeleteModal">Delete</button>
+                    }
                 </div>
             </div>
         </div>
 
-<!-- Product Section -->
-<div class="col-lg-4 col-md-12 col-sm-12">
-    <div class="card highlight-panel">
-        <div class="card-header">
-            <div class="section-header">Products</div>
-            <select id="productDropdown" class="form-select">
-                <option value="">Select product</option>
-                @foreach (var product in Model.Products)
-                {
-                    <option value="@product.product_id">@product.product_name (@product.model_year)</option>
-                }
-            </select>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-7">
-                    <label>Product Name</label>
-                    <input type="text" class="form-control" id="productName" value="@(firstProduct?.product_name ?? "")" readonly />
-                    <label>Brand</label>
-                    <input type="text" class="form-control" id="productBrand" value="@(firstProduct?.brands?.brand_name ?? "")" readonly />
-                    <label>Category</label>
-                    <input type="text" class="form-control" id="productCategory" value="@(firstProduct?.categories?.category_name ?? "")" readonly />
-                    <label>Year</label>
-                    <input type="text" class="form-control" id="productYear" value="@(firstProduct?.model_year.ToString() ?? "")" readonly />
+        <!-- Product Section -->
+        <div class="col-lg-4 col-md-12 col-sm-12">
+            <div class="card highlight-panel">
+                <div class="card-header">
+                    <div class="section-header">Products</div>
+                    <form method="get" action="@Url.Action("Maintain", "Maintain")" id="productForm">
+                        <input type="hidden" name="staffId" value="@(Model.SelectedStaff?.staff_id)" />
+                        <input type="hidden" name="customerId" value="@(Model.SelectedCustomer?.customer_id)" />
+                        <select name="productId" class="form-select" onchange="this.form.submit()">
+                            <option value="">Select product</option>
+                            @foreach (var product in Model.Products)
+                            {
+                                <option value="@product.product_id" @(Model.SelectedProduct?.product_id == product.product_id ? "selected" : "")>
+                                    @product.product_name (@product.model_year)
+                                </option>
+                            }
+                        </select>
+                    </form>
                 </div>
-                <div class="col-5 d-flex align-items-center justify-content-center">
-                    <div style="width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border  -radius: 8px; border: 1px solid #e0e0e0;">
-                        @if (!string.IsNullOrEmpty(firstProduct?.image_path))
-                        {
-                            <img src="@firstProduct.image_path"
-                                 alt="@firstProduct.product_name"
-                                 style="max-width: 130px; max-height: 130px; object-fit: contain; border-radius: 6px;"
-                                 onerror="this.src='/Content/images/placeholder.jpg';" />
-                        }
-                        else
-                        {
-                            <span style="color: #888; font-size: 0.95rem;">Bicycle image</span>
-                        }
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-7">
+                            <label>Product Name</label>
+                            <input type="text" class="form-control" value="@(Model.SelectedProduct?.product_name ?? "")" readonly />
+                            <label>Brand</label>
+                            <input type="text" class="form-control" value="@(Model.SelectedProduct?.brands?.brand_name ?? "")" readonly />
+                            <label>Category</label>
+                            <input type="text" class="form-control" value="@(Model.SelectedProduct?.categories?.category_name ?? "")" readonly />
+                            <label>Year</label>
+                            <input type="text" class="form-control" value="@(Model.SelectedProduct?.model_year.ToString() ?? "")" readonly />
+                        </div>
+                        <div class="col-5 d-flex align-items-center justify-content-center">
+                            <div style="width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; background: #f0f0f0; border-radius: 8px; border: 1px solid #e0e0e0;">
+                                @if (!string.IsNullOrEmpty(Model.SelectedProduct?.image_path))
+                                {
+                                    <img src="@Model.SelectedProduct.image_path"
+                                         alt="@Model.SelectedProduct.product_name"
+                                         style="max-width: 130px; max-height: 130px; object-fit: contain; border-radius: 6px;"
+                                         onerror="this.src='/Content/images/placeholder.jpg';" />
+                                }
+                                else
+                                {
+                                    <span style="color: #888; font-size: 0.95rem;">Bicycle image</span>
+                                }
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <div class="card-footer maintain-actions">
+                    @if (Model.SelectedProduct != null)
+                    {
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#productEditModal">Edit</button>
+                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#productUpdateModal">Update</button>
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#productDeleteModal">Delete</button>
+                    }
+                </div>
             </div>
         </div>
-        <div class="card-footer maintain-actions">
-            <button type="button" class="btn btn-outline-primary edit-link" data-url="@Url.Action("Edit", "products", new { id = firstProduct?.product_id })">Edit</button>
-            <button type="button" class="btn btn-outline-success update-link" data-url="@Url.Action("Edit", "products", new { id = firstProduct?.product_id })">Update</button>
-            <button type="button" class="btn btn-outline-danger delete-link" data-url="@Url.Action("Delete", "products", new { id = firstProduct?.product_id })">Delete</button>
-        </div>
-    </div>
-</div>
     </div>
 </div>
 
-<!-- Modal Structure -->
-<div id="myModal" class="modal fade" tabindex="-1">
+<!-- Staff Modals -->
+@if (Model.SelectedStaff != null)
+{
+    var staffStoreList = new SelectList(Model.Stores, "store_id", "store_name", Model.SelectedStaff.store_id);
+    var staffManagerList = new SelectList(Model.Staffs, "staff_id", "first_name", Model.SelectedStaff.manager_id);
+    var staffViewData = new ViewDataDictionary(ViewData) {
+        { "store_id", staffStoreList },
+        { "manager_id", staffManagerList }
+    };
+<!-- Staff Edit Modal -->
+<div class="modal fade" id="staffEditModal" tabindex="-1" aria-labelledby="staffEditModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Async CRUD</h5>
+                <h5 class="modal-title" id="staffEditModalLabel">Edit Staff</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="modal-content">
-                <!-- Modal content will be dynamically loaded here -->
+            <div class="modal-body">
+                @Html.Partial("~/Views/staffs/Edit.cshtml", Model.SelectedStaff, staffViewData)
             </div>
         </div>
     </div>
 </div>
+<!-- Staff Update Modal -->
+<div class="modal fade" id="staffUpdateModal" tabindex="-1" aria-labelledby="staffUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staffUpdateModalLabel">Update Staff</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("~/Views/staffs/Edit.cshtml", Model.SelectedStaff, staffViewData)
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Staff Delete Modal -->
+<div class="modal fade" id="staffDeleteModal" tabindex="-1" aria-labelledby="staffDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staffDeleteModalLabel">Delete Staff</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("~/Views/staffs/Delete.cshtml", Model.SelectedStaff)
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Customer Modals -->
+@if (Model.SelectedCustomer != null)
+{
+    <!-- Customer Edit Modal -->
+    <div class="modal fade" id="customerEditModal" tabindex="-1" aria-labelledby="customerEditModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customerEditModalLabel">Edit Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Partial("~/Views/customers/Edit.cshtml", Model.SelectedCustomer)
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Customer Update Modal -->
+    <div class="modal fade" id="customerUpdateModal" tabindex="-1" aria-labelledby="customerUpdateModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customerUpdateModalLabel">Update Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Partial("~/Views/customers/Edit.cshtml", Model.SelectedCustomer)
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Customer Delete Modal -->
+    <div class="modal fade" id="customerDeleteModal" tabindex="-1" aria-labelledby="customerDeleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customerDeleteModalLabel">Delete Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @Html.Partial("~/Views/customers/Delete.cshtml", Model.SelectedCustomer)
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Product Modals -->
+@if (Model.SelectedProduct != null)
+{
+    var productBrandList = new SelectList(Model.Brands, "brand_id", "brand_name", Model.SelectedProduct?.brand_id);
+    var productCategoryList = new SelectList(Model.Categories, "category_id", "category_name", Model.SelectedProduct?.category_id);
+    var productViewData = new ViewDataDictionary(ViewData) {
+        { "brand_id", productBrandList },
+        { "category_id", productCategoryList }
+    };
+<!-- Product Edit Modal -->
+<div class="modal fade" id="productEditModal" tabindex="-1" aria-labelledby="productEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productEditModalLabel">Edit Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("~/Views/products/Edit.cshtml", Model.SelectedProduct, productViewData)
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Product Update Modal -->
+<div class="modal fade" id="productUpdateModal" tabindex="-1" aria-labelledby="productUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productUpdateModalLabel">Update Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("~/Views/products/Edit.cshtml", Model.SelectedProduct, productViewData)
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Product Delete Modal -->
+<div class="modal fade" id="productDeleteModal" tabindex="-1" aria-labelledby="productDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="productDeleteModalLabel">Delete Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("~/Views/products/Delete.cshtml", Model.SelectedProduct)
+            </div>
+        </div>
+    </div>
+</div>
+}
 
 @section Scripts {
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    <script>
-        $(function () {
-            // Open modal for Edit, Update, Delete
-            $(".edit-link, .update-link, .delete-link").click(function (e) {
-                e.preventDefault();
-                var url = $(this).data("url");
-                if (!url) return;
-                $.get(url, function (data) {
-                    $("#modal-content").html(data);
-                    var modal = new bootstrap.Modal(document.getElementById('myModal'));
-                    modal.show();
-                }).fail(function () {
-                    alert("Error loading content.");
-                });
-            });
-
-            // Handle form submission in modal
-            $("#modal-content").on("submit", "form", function (e) {
-                e.preventDefault();
-                var form = $(this);
-                var url = form.attr("action");
-                var formData = form.serialize();
-                $.post(url, formData, function (data) {
-                    var modal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
-                    if (modal) modal.hide();
-                    location.reload();
-                }).fail(function () {
-                    alert("Error saving changes.");
-                });
-            });
-
-            // Staff dropdown change event for dynamic card update
-            $('#staffDropdown').change(function () {
-                var staffId = $(this).val();
-                if (!staffId) return;
-
-                // Update staff details
-                $.get('@Url.Action("GetStaffDetails", "Maintain")', { id: staffId }, function (data) {
-                    $('#staffFirstName').val(data.first_name);
-                    $('#staffLastName').val(data.last_name);
-                    $('#staffId').val(data.staff_id);
-                    // Update action buttons
-                    $('.edit-link').data('url', '@Url.Action("Edit", "staffs")/' + data.staff_id);
-                    $('.update-link').data('url', '@Url.Action("Edit", "staffs")/' + data.staff_id);
-                    $('.delete-link').data('url', '@Url.Action("Delete", "staffs")/' + data.staff_id);
-                });
-
-                // Update sold items
-                $.get('@Url.Action("GetStaffSoldItems", "Maintain")', { id: staffId }, function (items) {
-                    var html = "";
-                    if (items && items.length > 0) {
-                        for (var i = 0; i < items.length; i++) {
-                            var it = items[i];
-                            html += "Sold " + it.product_name + "<br/>";
-                        }
-                    } else {
-                        html = "No sold items found.";
-                    }
-                    $('#staffSoldItems').html(html);
-                });
-            });
-
-            // Customer dropdown change event for dynamic card update
-            $('#customerDropdown').change(function () {
-                var customerId = $(this).val();
-                if (!customerId) return;
-
-                // Update customer details
-                $.get('@Url.Action("GetCustomerDetails", "Maintain")', { id: customerId }, function (data) {
-                    $('#customerFirstName').val(data.first_name);
-                    $('#customerLastName').val(data.last_name);
-                    $('#customerId').val(data.customer_id);
-                    // Update action buttons
-                    $('.edit-link').data('url', '@Url.Action("Edit", "customers")/' + data.customer_id);
-                    $('.update-link').data('url', '@Url.Action("Edit", "customers")/' + data.customer_id);
-                    $('.delete-link').data('url', '@Url.Action("Delete", "customers")/' + data.customer_id);
-                });
-
-                // Update purchased items
-                $.get('@Url.Action("GetCustomerPurchasedItems", "Maintain")', { id: customerId }, function (items) {
-                    var html = "";
-                    if (items && items.length > 0) {
-                        for (var i = 0; i < items.length; i++) {
-                            var it = items[i];
-                            html += "Purchased " + it.product_name + "<br/>";
-                        }
-                    } else {
-                        html = "No purchased items found.";
-                    }
-                    $('#customerPurchasedItems').html(html);
-                });
-            });
-
-            // Product dropdown change event for dynamic card update
-            $('#productDropdown').change(function () {
-                var productId = $(this).val();
-                if (!productId) return;
-
-                $.get('@Url.Action("GetProductDetails", "Maintain")', { id: productId }, function (data) {
-                    if (!data) return;
-                    $('#productName').val(data.product_name);
-                    $('#productBrand').val(data.brand_name);
-                    $('#productCategory').val(data.category_name);
-                    $('#productYear').val(data.model_year);
-
-                    // Update action buttons
-                    $('.edit-link').data('url', '@Url.Action("Edit", "products")/' + data.product_id);
-                    $('.update-link').data('url', '@Url.Action("Edit", "products")/' + data.product_id);
-                    $('.delete-link').data('url', '@Url.Action("Delete", "products")/' + data.product_id);
-                });
-            });
-        });
-    </script>
 }

@@ -9,6 +9,9 @@ namespace u24628299_Ass3.Models
         public List<staffs> Staffs { get; set; }
         public List<customers> Customers { get; set; }
         public List<products> Products { get; set; }
+        public List<stores> Stores { get; set; }
+        public List<brands> Brands { get; set; }
+        public List<categories> Categories { get; set; }
 
         public staffs SelectedStaff { get; set; }
         public customers SelectedCustomer { get; set; }
